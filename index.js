@@ -1,6 +1,8 @@
 
 import { input, password } from '@inquirer/prompts';
 import axios from 'axios';
+import twilio from "twilio"
+
 
 (async() => {
     console.log("Hi, this is your personal TwilioCLI to send messages.")
@@ -8,7 +10,7 @@ import axios from 'axios';
     console.log("Thank you.")
     const authToken = await password({message: "Now, please enter your AuthToken", mask: true})
 
-    sendMessageWithAxios({accountSid, authToken})
+    getMessages({accountSid, authToken})
   }
 )()
 
@@ -48,6 +50,38 @@ const sendMessageWithAxios = async (params) => {
 
 const sendMessageWithTwilio = async () => {
   
+}
+
+const getMessages = async (params) => {
+
+  const {accountSid, authToken} = params  
+
+  const client = new twilio(accountSid, authToken);
+
+  const startDate = await input({message: 'Enter the start date (YYYY-MM-DD)'});
+  const endDate = await input({message: 'Enter the end date (YYYY-MM-DD)'});
+
+  // Lógica para obtener mensajes entre las fechas proporcionadas
+
+  const isoStartDate = new Date(startDate).toISOString();
+  const isoEndDate = new Date(endDate).toISOString();
+
+  try {
+    const messages = await client.messages.list({ 
+      dateSentAfter: isoStartDate,
+       dateSentBefore: isoEndDate
+    });
+    console.log('Messages between the specified dates:');
+    console.log(messages);
+  } catch (error) {
+    console.log(error)
+  }
+
+  
+
+
+
+
 }
 
 
